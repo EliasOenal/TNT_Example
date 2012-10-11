@@ -22,7 +22,9 @@ MODEL = -DSTM32F10X_MD
 #MODEL = -DSTM32F10X_CL
 endif
 
-TARGET = arm-none-eabi // Toolchain prefix
+# Toolchain prefix
+TARGET = arm-none-eabi
+
 ifdef STM32F4
 ARCH_FLAGS = -mthumb -march=armv7e-m -mfloat-abi=hard -mfpu=fpv4-sp-d16 # Cortex-M4 with FPU
 else
