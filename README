@@ -1,0 +1,3 @@
+Thumb2 Newlib Toolchain example project
+
+This project is an example for GCC based toolchains (TNT recommended) and supports the STM32F1 and STM32F4 Discovery Boards. When successfully flashed the LEDs should start blinking. ST generously allowed me to distribute their firmware libraries with my project, yet they still are licensed under their terms. All my code is released as public domain. If you want to use the ST library you have to extract it first. For configuration options have a look at the makefile.
