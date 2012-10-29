@@ -20,46 +20,46 @@ _sstack = (_estack - 512); /* Lower stack boundary */
 SECTIONS {
 	.isr_vector :
 	{
-		. = ALIGN(2);
+		. = ALIGN(4);
         	KEEP(*(.isr_vector))
-		. = ALIGN(2);
+		. = ALIGN(4);
 	} >FLASH
 
 	.text :
 	{
-		. = ALIGN(2);
+		. = ALIGN(4);
 		*(.text)
 		*(.text.*)
 		*(.rodata)
 		*(.rodata.*)
-		. = ALIGN(2);
+		. = ALIGN(4);
    	 	_etext = .;
    	 	_sidata = _etext;
 	} > FLASH
 
 	.data : AT ( _sidata )
 	{
-		. = ALIGN(2);
+		. = ALIGN(4);
         	_sdata = . ;
         	_data = . ;
 		*(.data)
 		*(.data.*)
-		. = ALIGN(2);
+		. = ALIGN(4);
 		_edata = . ;
 	} >RAM
 
 	.bss :
 	{
-		. = ALIGN(2);
+		. = ALIGN(4);
 		_sbss = .;
 		_bss = .;
 		*(.bss)
 		*(.bss.*)
-		. = ALIGN(2);
+		. = ALIGN(4);
    	 	_ebss = . ;
 	} >RAM
 }
 
-. = ALIGN(2);
+. = ALIGN(4);
 end = .;
 _end = .;
