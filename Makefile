@@ -5,6 +5,10 @@
 #TOOLCHAIN = $HOME/toolchain/bin
 #export PATH = $TOOLCHAIN:$PATH
 
+# comment the next line if LTO isn't supported
+OPTIMIZE += -flto -flto-partition=none -fno-use-linker-plugin -ffunction-sections -fdata-sections
+OPT = s
+
 #STM32F1 = 1
 STM32F4 = 1
 BUILD_ST_LIB = 1
@@ -45,7 +49,6 @@ OBJDUMP = $(TARGET)-objdump
 SIZE = $(TARGET)-size
 NM = $(TARGET)-nm
 
-OPT = s
 BUILDDIR = build
 EXECUTABLE = $(BUILDDIR)/firmware
 
@@ -66,7 +69,6 @@ LDFLAGS += -Wl,-Map=$(EXECUTABLE).map
 
 
 OPTIMIZE += -O$(OPT)
-#OPTIMIZE += -flto -flto-partition=none -fno-use-linker-plugin
 CFLAGS += -ffunction-sections
 CFLAGS += -fdata-sections
 LDFLAGS += -Wl,--gc-sections
