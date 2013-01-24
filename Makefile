@@ -133,7 +133,7 @@ CFLAGS += $(patsubst %,-I%,$(INCLUDE))
 all: setup elf bin lss sym size
 
 size:
-	$(SIZE) $(EXECUTABLE).elf
+	$(SIZE) -A $(EXECUTABLE).elf
 
 setup:
 	@mkdir -p $(BUILDDIR)
