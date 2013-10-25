@@ -14,19 +14,21 @@
 #endif
 #endif //ST_LIB
 
-void delay(volatile uint32_t count);
+void delay(volatile unsigned int count);
 
-
+//void SystemInit()
+//{
+//}
 
 int main(void)
 {
 	// Testing some syscalls
-	_write("hello world"); // Can output only strings, most memory conserving.
-	iprintf("hello world"); // Format strings without floats, memory conserving.
-	printf("hello world"); // Everything, huge waste of memory.
-	
-	void* ptr = malloc(0x400); // One kilobyte of heap please!
-	free(ptr); // Actually I didn't really need it.
+	//_write("hello world"); // Can output only strings, most memory conserving.
+	//iprintf("hello world"); // Format strings without floats, memory conserving.
+	//printf("hello world"); // Everything, huge waste of memory.
+
+	//void* ptr = malloc(0x400); // One kilobyte of heap please!
+	//free(ptr); // Actually I didn't really need it.
 
 #ifdef ST_LIB
 	{
@@ -64,12 +66,14 @@ int main(void)
 		delay(0x7FFFFF);
 		GPIO_ResetBits(GPIOD, GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15);
 		delay(0xFFFFFF);
+#else
+		delay(0xDEADBEEF);
 #endif //ST_LIB
 	}
 }
 
 // Do nothing, for a while (what a pun!)
-void delay(volatile uint32_t count)
+void delay(volatile unsigned int count)
 {
   while(count--)
   {

@@ -6,8 +6,9 @@
 #export PATH = $TOOLCHAIN:$PATH
 
 # comment the next line if LTO isn't supported
-OPTIMIZE += -flto -flto-partition=none -fno-use-linker-plugin -ffunction-sections -fdata-sections
+#OPTIMIZE += -flto -flto-partition=none #-fno-use-linker-plugin
 OPT = s
+DEBUG = -g -gdwarf-2
 
 #STM32F1 = 1
 STM32F4 = 1
@@ -62,9 +63,15 @@ ASFLAGS += $(ARCH_FLAGS)
 
 LDFLAGS += $(ARCH_FLAGS)
 LDFLAGS += -Tlinker_script/simple.ld
-LDFLAGS += -nostartfiles -static
-LDFLAGS += -lm -lc -lgcc 
-LDFLAGS += -lnosys #newlib specific - stub syscalls
+LDFLAGS += -static
+LDFLAGS += -nostartfiles
+#CFLAGS += -fno-builtin
+#LDFLAGS += -nostdlib
+#LDFLAGS += -nodefaultlibs
+LDFLAGS += -lc
+LDFLAGS += -lm
+LDFLAGS += -lgcc
+#LDFLAGS += -lnosys #newlib specific - stub syscalls
 LDFLAGS += -Wl,-Map=$(EXECUTABLE).map
 
 
@@ -73,8 +80,8 @@ CFLAGS += -ffunction-sections
 CFLAGS += -fdata-sections
 LDFLAGS += -Wl,--gc-sections
 
-CFLAGS += $(OPTIMIZE)
-LDFLAGS += $(OPTIMIZE)
+CFLAGS += $(OPTIMIZE) $(DEBUG)
+LDFLAGS += $(OPTIMIZE) $(DEBUG)
 
 ST_LIB_PATH = STM32_USB-Host-Device_Lib_V2.1.0
 ST_CMSIS_CORE = $(ST_LIB_PATH)/Libraries/CMSIS
@@ -130,9 +137,9 @@ AOBJ += $(patsubst %, $(BUILDDIR)/%,$(ASRC:.s=.o))
 INCLUDE += $(ST_CMSIS_CORE)/Include $(ST_CMSIS_DEVICE)/Include
 CFLAGS += $(patsubst %,-I%,$(INCLUDE))
 
-all: setup elf bin lss sym size
+all: setup $(EXECUTABLE).elf $(EXECUTABLE).bin $(EXECUTABLE).lss $(EXECUTABLE).sym size
 
-size:
+size: $(EXECUTABLE).elf $(EXECUTABLE).bin $(EXECUTABLE).lss $(EXECUTABLE).sym
 	$(SIZE) -A $(EXECUTABLE).elf
 
 setup:
@@ -146,34 +153,28 @@ clean:
 	rm -rf $(BUILDDIR)
 
 
-$(COBJ): $(BUILDDIR)/%.o : %.c
+$(COBJ): $(BUILDDIR)/%.o : %.c setup
 	@echo COMPILING: $<
 	$(CC) $(CFLAGS) $< -o $@
 
-$(AOBJ): $(BUILDDIR)/%.o : %.s
+$(AOBJ): $(BUILDDIR)/%.o : %.s setup
 	@echo ASSEMBLING:
 	$(CC) $(ASFLAGS) $< -o $@
 
-elf: $(EXECUTABLE).elf
-bin: $(EXECUTABLE).bin
-hex: $(EXECUTABLE).hex
-lss: $(EXECUTABLE).lss 
-sym: $(EXECUTABLE).sym
-
-%.elf:  $(COBJ) $(AOBJ)
+$(EXECUTABLE).elf:  $(COBJ) $(AOBJ)
 	@echo LINKING: $@
 	$(CC) $(LDFLAGS) $(COBJ) $(AOBJ) -o $@
 
-%.hex: %.elf
+$(EXECUTABLE).hex: $(EXECUTABLE).elf
 	$(OBJCOPY) -O binary $< $@
 
-%.bin: %.elf
+$(EXECUTABLE).bin: $(EXECUTABLE).elf
 	$(OBJCOPY) -O binary $< $@
 
-%.lss: %.elf
+$(EXECUTABLE).lss: $(EXECUTABLE).elf
 	@echo GENERATING EXTENDED LISTING: $@
 	$(OBJDUMP) -h -S -D $< > $@
 
-%.sym: %.elf
+$(EXECUTABLE).sym: $(EXECUTABLE).elf
 	@echo GENERATING SYMBOL TABLE: $@
 	$(NM) -n $< > $@
