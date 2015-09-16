@@ -6,16 +6,11 @@
 
 #ifdef ST_LIB
 #ifdef STM32F4
-#include "stm32f4xx_hal_gpio.h"
-#include "stm32f4xx_hal_rcc.h"
+#include "stm32f4xx_hal.h"
 #endif
 #endif //ST_LIB
 
 void delay(volatile unsigned int count);
-
-//void SystemInit()
-//{
-//}
 
 int main(void)
 {
@@ -29,44 +24,33 @@ int main(void)
 
 #ifdef ST_LIB
 	{
+		HAL_Init();
 #ifdef STM32F4
-  		__GPIOD_CLK_ENABLE();
+  		__GPIOG_CLK_ENABLE();
 #endif
 		// Configure pins
 		GPIO_InitTypeDef GPIO_InitStructure;
-		GPIO_InitStructure.Pin =  GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15;
+		GPIO_InitStructure.Pin =  GPIO_PIN_13 | GPIO_PIN_14;
 #ifdef STM32F4
 		GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
         GPIO_InitStructure.Pull = GPIO_PULLUP;
-        GPIO_InitStructure.Speed = GPIO_SPEED_FAST;
+        GPIO_InitStructure.Speed = GPIO_SPEED_LOW;
 #endif
-		HAL_GPIO_Init(GPIOD, &GPIO_InitStructure);
+		HAL_GPIO_Init(GPIOG, &GPIO_InitStructure);
 	}
 #endif //ST_LIB
 
 	while (1)
 	{
 #ifdef ST_LIB
-		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12, GPIO_PIN_SET);
-		delay(0x3FFFFF);
-		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET);
-		delay(0x3FFFFF);
-		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
-		delay(0x3FFFFF);
-		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, GPIO_PIN_SET);
-		delay(0x7FFFFF);
-		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15, GPIO_PIN_RESET);
-		delay(0xFFFFFF);
+		HAL_GPIO_WritePin(GPIOG, GPIO_PIN_13, GPIO_PIN_SET);
+		HAL_Delay(500);
+		HAL_GPIO_WritePin(GPIOG, GPIO_PIN_14, GPIO_PIN_SET);
+		HAL_Delay(500);
+		HAL_GPIO_WritePin(GPIOG, GPIO_PIN_13 | GPIO_PIN_14, GPIO_PIN_RESET);
+		HAL_Delay(1000);
 #else
-		delay(0xDEADBEEF);
+		// Do nothing
 #endif //ST_LIB
 	}
-}
-
-// Do nothing, for a while (what a pun!)
-void delay(volatile unsigned int count)
-{
-  while(count--)
-  {
-  }
 }

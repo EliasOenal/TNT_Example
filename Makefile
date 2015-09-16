@@ -64,7 +64,7 @@ LDFLAGS += -Wl,--gc-sections
 CFLAGS += $(OPTIMIZE) $(DEBUG)
 LDFLAGS += $(OPTIMIZE) $(DEBUG)
 
-ST_LIB_PATH = STM32Cube_FW_F4_V1.3.0
+ST_LIB_PATH = STM32Cube_FW_F4_V1.8.0
 
 ifdef STM32F4
 CFLAGS += -DSTM32F4
@@ -72,7 +72,7 @@ CFLAGS += -DSTM32F407xx
 ST_CMSIS_CORE = $(ST_LIB_PATH)/Drivers/CMSIS
 ST_CMSIS_DEVICE = $(ST_LIB_PATH)/Drivers/CMSIS/Device/ST/STM32F4xx
 CSRC += $(ST_CMSIS_DEVICE)/Source/Templates/system_stm32f4xx.c
-ASRC += $(ST_CMSIS_DEVICE)/Source/Templates/gcc/startup_stm32f407xx.s
+ASRC += $(ST_CMSIS_DEVICE)/Source/Templates/gcc/startup_stm32f417xx.s
 endif
 
 ifdef BUILD_ST_LIB
@@ -103,6 +103,7 @@ CFLAGS += -DST_LIB
 CFLAGS += -D"assert_param(expr)=((void)0)"
 INCLUDE += $(ST_STD_PERIPH_LIB)/Inc
 CSRC += $(patsubst %, $(ST_STD_PERIPH_LIB)/Src/%,$(_ST_STD_PERIPH_LIB_SRC))
+CSRC += $(ST_LIB_PATH)/Projects/STM32F4-Discovery/Templates/Src/stm32f4xx_it.c
 endif
 endif
 
@@ -121,12 +122,13 @@ CFLAGS += $(patsubst %,-I%,$(INCLUDE))
 all: setup $(EXECUTABLE).elf $(EXECUTABLE).bin $(EXECUTABLE).lss $(EXECUTABLE).sym size
 
 size: $(EXECUTABLE).elf $(EXECUTABLE).bin $(EXECUTABLE).lss $(EXECUTABLE).sym
-	$(SIZE) -A $(EXECUTABLE).elf
+	$(SIZE) -Ax $(EXECUTABLE).elf
 
 setup:
 	@mkdir -p $(BUILDDIR)
 	@mkdir -p $(BUILDDIR)/$(ST_STD_PERIPH_LIB)/Src
 	@mkdir -p $(BUILDDIR)/$(ST_CMSIS_DEVICE)/Source/Templates/gcc/
+	@mkdir -p $(BUILDDIR)/$(ST_LIB_PATH)/Projects/STM32F4-Discovery/Templates/Src/
 
 clean:
 	@echo CLEANING UP:
